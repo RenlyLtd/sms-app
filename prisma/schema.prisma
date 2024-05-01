@@ -1,0 +1,168 @@
+// Define the Prisma schema for your database
+datasource db {
+  provider = "postgresql" // You can change this to another supported database like MySQL, SQLite, etc.
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Leads
+model Lead {
+  id            Int             @id @default(autoincrement())
+  firstname     String
+  lastname      String
+  contact_no    String?
+  email         String?         @unique
+  dns           Boolean         @default(true)
+  Addresses     Address[]
+  messages      Message[]
+  campaigns     Campaign[]      @relation("LeadToCampaign")
+  CampaignLeads CampaignLeads[]
+}
+
+// Messages
+model Message {
+  id                 Int              @id @default(autoincrement())
+  destination        String
+  data               String
+  flash              Boolean          @default(false)
+  received           DateTime?
+  scheduled_delivery DateTime?
+  lead_id            Int?
+  Lead               Lead?            @relation(fields: [lead_id], references: [id])
+  delivery_reports   DeliveryReport[]
+}
+
+// Delivery Reports
+model DeliveryReport {
+  id                 Int      @id @default(autoincrement())
+  destination_number String
+  code               Int
+  dlr_body           String
+  timestamp          DateTime
+  Message            Message? @relation(fields: [msg_id], references: [id])
+  msg_id             Int?
+}
+
+// Lists
+model List {
+  list_id     Int        @id @default(autoincrement())
+  name        String
+  description String?
+  type        String
+  lead_count  Int        @default(0)
+  created     DateTime   @default(now())
+  updated     DateTime   @updatedAt
+  tags        String[]
+  campaigns   Campaign[]
+}
+
+// Campaigns
+model Campaign {
+  id              Int             @id @default(autoincrement())
+  name            String
+  list_id         Int
+  List            List            @relation(fields: [list_id], references: [list_id])
+  created         DateTime        @default(now())
+  updated         DateTime        @updatedAt
+  ended           DateTime?
+  clicks          Int             @default(0)
+  unsubscriptions Int             @default(0)
+  status          String
+  conversions     Int             @default(0)
+  leads           Lead[]          @relation("LeadToCampaign")
+  CampaignLeads   CampaignLeads[]
+}
+
+// Many-to-many helper table for explicit relation (If Prisma does not handle this automatically)
+model CampaignLeads {
+  campaign    Campaign @relation(fields: [campaign_id], references: [id])
+  campaign_id Int
+  lead        Lead     @relation(fields: [lead_id], references: [id])
+  lead_id     Int
+
+  @@id([campaign_id, lead_id])
+}
+
+enum CustomerStatus {
+  Order
+  Active
+  Cancelled
+  Terminated
+}
+
+enum CustomerSubStatus {
+  Order_Received
+  Order_Registered
+  Installation_Issue
+  Lead_In_Install_Booked
+  Pre_Install_Check_Booked
+  Pre_Install_Failed
+  Lead_In_Failed
+  Faceplate_Installed_Awaiting_CPE
+  Install_Complete_Activation_Required
+  Activated
+  Cancelled
+  Terminated
+}
+
+// Customers
+model Customer {
+  id                       Int               @id @default(autoincrement())
+  ho_cmid                  Int?
+  firstname                String
+  lastname                 String
+  dob                      DateTime
+  mobile                   String
+  email                    String            @unique
+  bundleId                 Int?
+  Bundle                   Bundle?           @relation(fields: [bundleId], references: [id])
+  ordering_date            DateTime?
+  termination_date         DateTime?
+  activation_date          DateTime?
+  cancellation_date        DateTime?
+  installation_appointment DateTime?
+  dns                      Boolean           @default(true)
+  Addresses                Address[]
+  customer_status          CustomerStatus
+  customer_sub_status      CustomerSubStatus
+  total_wifi               Boolean
+  phone                    Boolean
+  total_monthly_cost       Int
+  marketing_pref           Boolean
+  email_alias              String?           @unique
+}
+
+// Bundles
+model Bundle {
+  id             Int        @id @default(autoincrement())
+  name           String
+  speed          Int
+  contractLength Int        @map("contract_length")
+  minSpeed       Int        @map("min_speed")
+  upSpeed        Int        @map("up_speed")
+  downSpeed      Int        @map("down_speed")
+  promoPrice     Float      @map("promo_price")
+  oocPrice       Float      @map("ooc_price") // Out-of-contract price
+  Customers      Customer[]
+  activationFee  Int
+}
+
+// Addresses
+model Address {
+  uprn         Int      @id
+  address1     String
+  address2     String?
+  street       String?
+  city         String
+  postcode     String
+  buildingType String?  @map("building_type")
+  account      Int?
+  siteType     String?  @map("site_type")
+  CustomerId   Int
+  Customer     Customer @relation(fields: [CustomerId], references: [id])
+  Lead         Lead?    @relation(fields: [leadId], references: [id])
+  leadId       Int?
+}
