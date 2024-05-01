@@ -15,7 +15,11 @@
 	import { customers } from '$lib/data/customers';
 </script>
 
-<main class="grid flex-1 items-start p-8">
+<main class="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-6 md:gap-8">
+	<div class="mx-2 grid w-full max-w-6xl gap-2">
+		<h1 class="text-3xl font-semibold">Customers</h1>
+		<p class="text-muted-foreground">Manage your customers</p>
+	</div>
 	<Tabs.Root value="order">
 		<div class="flex items-center">
 			<Tabs.List>
@@ -49,10 +53,6 @@
 		</div>
 		<Tabs.Content value="order">
 			<Card.Root>
-				<Card.Header>
-					<Card.Title>Customers</Card.Title>
-					<Card.Description>Manage your customers.</Card.Description>
-				</Card.Header>
 				<Card.Content>
 					<Table.Root>
 						<Table.Header>

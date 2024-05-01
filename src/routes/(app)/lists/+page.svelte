@@ -11,9 +11,35 @@
 
 	import * as Table from '$lib/components/ui/table/index.js';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
+	import { Input } from '$lib/components/ui/input';
+	import Search from 'lucide-svelte/icons/search';
+	import * as Pagination from '$lib/components/ui/pagination';
+	import ChevronLeft from 'lucide-svelte/icons/chevron-left';
+	import ChevronRight from 'lucide-svelte/icons/chevron-right';
+	import { mediaQuery } from 'svelte-legos';
+
+	const isDesktop = mediaQuery('(min-width: 768px)');
+
+	let count = 20;
+	$: perPage = $isDesktop ? 3 : 8;
+	$: siblingCount = $isDesktop ? 1 : 0;
 </script>
 
 <main class="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-6 md:gap-8">
+	<div class="flex justify-between">
+		<div class="mx-2 grid w-full max-w-6xl gap-2">
+			<h1 class="text-3xl font-semibold">Lists</h1>
+			<p class="text-muted-foreground">Manage your lists</p>
+		</div>
+		<div class="relative ml-auto flex-1 md:grow-0">
+			<Search class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+			<Input
+				type="search"
+				placeholder="Search..."
+				class="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
+			/>
+		</div>
+	</div>
 	<Tabs.Root value="all">
 		<div class="flex items-center">
 			<Tabs.List>
@@ -50,18 +76,14 @@
 		</div>
 		<Tabs.Content value="all">
 			<Card.Root>
-				<Card.Header>
-					<Card.Title>Lists</Card.Title>
-					<Card.Description>Manage your prospects lists.</Card.Description>
-				</Card.Header>
 				<Card.Content>
 					<Table.Root>
 						<Table.Header>
 							<Table.Row>
 								<Table.Head class="hidden w-[300px] sm:table-cell">Name</Table.Head>
-								<Table.Head>Status</Table.Head>
-								<Table.Head class="hidden md:table-cell">Price</Table.Head>
-								<Table.Head class="hidden md:table-cell">Total Sales</Table.Head>
+								<Table.Head>Type</Table.Head>
+								<Table.Head class="hidden md:table-cell">Description</Table.Head>
+								<Table.Head class="hidden md:table-cell">Total Leads</Table.Head>
 								<Table.Head class="hidden md:table-cell">Created at</Table.Head>
 								<Table.Head>
 									<span class="sr-only">Actions</span>
@@ -220,6 +242,36 @@
 					<div class="text-xs text-muted-foreground">
 						Showing <strong>1-10</strong> of <strong>32</strong> products
 					</div>
+
+					<Pagination.Root {count} {perPage} {siblingCount} let:pages let:currentPage>
+						<Pagination.Content>
+							<Pagination.Item>
+								<Pagination.PrevButton>
+									<ChevronLeft class="h-4 w-4" />
+									<span class="hidden sm:block">Previous</span>
+								</Pagination.PrevButton>
+							</Pagination.Item>
+							{#each pages as page (page.key)}
+								{#if page.type === 'ellipsis'}
+									<Pagination.Item>
+										<Pagination.Ellipsis />
+									</Pagination.Item>
+								{:else}
+									<Pagination.Item>
+										<Pagination.Link {page} isActive={currentPage === page.value}>
+											{page.value}
+										</Pagination.Link>
+									</Pagination.Item>
+								{/if}
+							{/each}
+							<Pagination.Item>
+								<Pagination.NextButton>
+									<span class="hidden sm:block">Next</span>
+									<ChevronRight class="h-4 w-4" />
+								</Pagination.NextButton>
+							</Pagination.Item>
+						</Pagination.Content>
+					</Pagination.Root>
 				</Card.Footer>
 			</Card.Root>
 		</Tabs.Content>
