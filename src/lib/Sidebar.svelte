@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { navItems } from './data/navItems';
-	import Package from 'lucide-svelte/icons/package';
+	import MessagesSquare from 'lucide-svelte/icons/messages-square';
 	import { Badge } from '$lib/components/ui/badge/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
@@ -12,8 +12,8 @@
 	<div class="flex h-full max-h-screen flex-col gap-2">
 		<div class="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
 			<a href="/" class="flex items-center gap-2 font-semibold">
-				<Package class="h-6 w-6" />
-				<span class="">Acme Inc</span>
+				<MessagesSquare class="h-8 w-8" />
+				<span class="">SMS App</span>
 			</a>
 		</div>
 		<div class="flex-1">
