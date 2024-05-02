@@ -1,0 +1,33 @@
+lists
+
+create a list
+name the list, assign segment
+import recipeints
+add ad hoc receipients
+import a list of leads, name, address, phone, email, account
+save
+edit
+
+
+campaign
+
+create a campaign
+select the list
+review recipients
+create a message
+summary before submit
+send
+
+
+read campaign 
+summary stats
+date sent
+date created
+lists
+
+leads
+create a lead
+edit a lead
+delete a lead
+convert a lead
+
