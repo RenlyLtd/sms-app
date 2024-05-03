@@ -11,3 +11,6 @@ declare global {
 }
 
 export {};
+
+/// <reference types="svelte" />
+export declare function mediaQuery(query: string): import("svelte/store").Readable<boolean>;

@@ -1,11 +1,7 @@
 <script lang="ts" context="module">
 	import { fly, scale } from 'svelte/transition';
-	import {
-		type Transition,
-		type TransitionParams,
-		prefersReducedMotionStore
-	} from '../../index.js';
-	import { dynamicTransition } from '../../internal/transitions.js';
+	import { prefersReducedMotionStore } from './PrefersReducedMotions';
+	import { type TransitionParams, type Transition, dynamicTransition } from './transitions';
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	type FlyTransition = typeof fly;
@@ -24,9 +20,10 @@
 >
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { flip } from 'svelte/animate';
+	import X from 'lucide-svelte/icons/x';
 
 	// Types
-	import type { CssClasses, SvelteEvent } from '../../index.js';
+	import type { CssClasses, SvelteEvent } from './index';
 
 	// Event Dispatcher
 	type InputChipEvent = {
@@ -77,11 +74,12 @@
 
 	// Props (styles)
 	/** Provide classes or a variant to style the chips. */
-	export let chips: CssClasses = 'variant-filled';
+	export let chips: CssClasses =
+		'bg-primary  text-white inline-flex select-none items-center rounded-md border px-1 gap-1 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2';
 	/** Provide classes used to indicate invalid state. */
-	export let invalid: CssClasses = 'input-error';
+	export let invalid: CssClasses = 'ring-ring';
 	/** Provide classes to set padding styles. */
-	export let padding: CssClasses = 'p-2';
+	export let padding: CssClasses = '';
 	/** Provide classes to set border radius styles. */
 	export let rounded: CssClasses = 'rounded-container-token';
 
@@ -159,11 +157,12 @@
 	};
 
 	// Classes
-	const cBase = 'textarea cursor-pointer';
+	const cBase = ' w-full rounded-md bg-background  text-sm ring-offset-background';
+
 	const cChipWrapper = 'space-y-4';
 	const cChipList = 'flex flex-wrap gap-2';
-	const cInputField = 'unstyled bg-transparent border-0 !ring-0 p-0 w-full';
-
+	const cInputField =
+		'flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50';
 	// Local
 	let inputValid = true;
 	let chipValues: Array<{ val: (typeof value)[0]; id: number }> =
@@ -366,7 +365,7 @@
 					<div animate:flip={{ duration }}>
 						<button
 							type="button"
-							class="chip {chips}"
+							class="chip {chips} "
 							on:click={(e) => removeChipInternally(e, i, val)}
 							on:click
 							on:keypress
@@ -383,8 +382,8 @@
 								enabled: transitions
 							}}
 						>
-							<span>{val}</span>
-							<span>✕</span>
+							{val}
+							<X class="size-4" />
 						</button>
 					</div>
 				{/each}

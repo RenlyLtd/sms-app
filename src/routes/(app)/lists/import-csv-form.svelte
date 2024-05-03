@@ -9,7 +9,6 @@
 		superForm
 	} from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
-	import { Textarea } from '$lib/components/ui/textarea';
 	import LoaderCircle from 'lucide-svelte/icons/loader-circle';
 	import { toast } from 'svelte-sonner';
 
@@ -37,46 +36,38 @@
 	});
 
 	const { form: formData, enhance } = form;
-	import InputChip from '$lib/components/ui/input-chip/Input-chip.svelte';
+	import { Button } from '$lib/components/ui/button';
 </script>
 
-<h2 class="text-xl font-bold">Create a new List</h2>
+<h2 class="text-xl font-bold">Upload CSV</h2>
 
-<form method="POST" use:enhance action="?/createList">
-	<Form.Field {form} name="name">
+<form method="POST" use:enhance action="?/importCSV">
+	<Form.Field {form} name="name" class="py-6">
 		<Form.Control let:attrs>
-			<Form.Label>Name</Form.Label>
-			<Input {...attrs} bind:value={$formData.name} />
+			<Input
+				{...attrs}
+				bind:value={$formData.name}
+				class="h-48 w-full border border-dashed"
+				type="file"
+			>
+				<Form.Label>Name</Form.Label>
+			</Input>
 		</Form.Control>
-		<Form.Description>This is public name of your list.</Form.Description>
 		<Form.FieldErrors />
 	</Form.Field>
 	<Form.Field {form} name="account">
 		<Form.Control let:attrs>
-			<Form.Label>Account</Form.Label>
-			<Input {...attrs} bind:value={$formData.account} />
-		</Form.Control>
-		<Form.Description
-			>Accounts are freeholders who own the building for example Southwark Council</Form.Description
-		>
-		<Form.FieldErrors />
-	</Form.Field>
-	<Form.Field {form} name="tags">
-		<Form.Control let:attrs>
-			<Form.Label>Tags</Form.Label>
+			<Form.Label>or upload from URL</Form.Label>
 
-			<InputChip {...attrs} bind:value={$formData.tags} placeholder="Enter tags and press enter" />
+			<form class="flex w-full max-w-sm items-center space-x-2">
+				<Input type="url" placeholder="Add file URL" {...attrs} bind:value={$formData.account} />
+				<Button type="submit">Upload</Button>
+			</form>
 		</Form.Control>
 
 		<Form.FieldErrors />
 	</Form.Field>
-	<Form.Field {form} name="description">
-		<Form.Control let:attrs>
-			<Form.Label>Description</Form.Label>
-			<Textarea {...attrs} bind:value={$formData.description} />
-		</Form.Control>
-		<Form.FieldErrors />
-	</Form.Field>
+
 	<div class="my-4 flex justify-end">
 		<Form.Button disabled={submitting}
 			>{#if submitting}

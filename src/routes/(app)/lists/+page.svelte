@@ -1,10 +1,11 @@
 <script lang="ts">
-	import File from 'lucide-svelte/icons/file';
+	import FileSpreadsheet from 'lucide-svelte/icons/file-spreadsheet';
 	import ListFilter from 'lucide-svelte/icons/list-filter';
 	import Ellipsis from 'lucide-svelte/icons/ellipsis';
 	import CirclePlus from 'lucide-svelte/icons/circle-plus';
 	import type { PageData } from './$types.js';
 	import CreateListForm from './create-list-form.svelte';
+	import ImportCsvForm from './import-csv-form.svelte';
 	export let data: PageData;
 
 	import { Badge } from '$lib/components/ui/badge/index.js';
@@ -20,14 +21,33 @@
 	import * as Pagination from '$lib/components/ui/pagination';
 	import ChevronLeft from 'lucide-svelte/icons/chevron-left';
 	import ChevronRight from 'lucide-svelte/icons/chevron-right';
-	import { mediaQuery } from 'svelte-legos';
 
-	const isDesktop = mediaQuery('(min-width: 768px)');
+	import { onMount } from 'svelte';
 
+	const desktopQuery = '(min-width: 768px)';
 	let count = 20;
-	$: perPage = $isDesktop ? 3 : 8;
-	$: siblingCount = $isDesktop ? 1 : 0;
+	let perPage: number;
+	let siblingCount: number;
+
+	// Function to handle window resize
+	function handleResize() {
+		const isDesktop = window.matchMedia(desktopQuery).matches;
+		perPage = isDesktop ? 3 : 8;
+		siblingCount = isDesktop ? 1 : 0;
+	}
+
+	// Setup and teardown the resize listener only in the client-side environment
+	onMount(() => {
+		handleResize(); // Initialize values correctly on load
+		window.addEventListener('resize', handleResize);
+		return () => {
+			window.removeEventListener('resize', handleResize);
+		};
+	});
+	import { Label } from '$lib/components/ui/label';
 </script>
+
+<svelte:window on:resize={handleResize} />
 
 <main class="m-4 space-y-4">
 	<div class="mx-2 grid w-full max-w-6xl gap-2">
@@ -60,10 +80,19 @@
 					<DropdownMenu.CheckboxItem>Archived</DropdownMenu.CheckboxItem>
 				</DropdownMenu.Content>
 			</DropdownMenu.Root>
-			<Button size="sm" variant="outline" class="h-8 gap-1">
-				<File class="h-3.5 w-3.5" />
-				<span class="sr-only sm:not-sr-only sm:whitespace-nowrap"> Import </span>
-			</Button>
+
+			<Dialog.Root>
+				<Dialog.Trigger
+					><Button size="sm" variant="outline" class="h-8 gap-1">
+						<FileSpreadsheet class="h-3.5 w-3.5" />
+						<span class="sr-only sm:not-sr-only sm:whitespace-nowrap"> Import CSV </span>
+					</Button></Dialog.Trigger
+				>
+				<Dialog.Content>
+					<ImportCsvForm data={data.form} />
+				</Dialog.Content>
+			</Dialog.Root>
+
 			<Dialog.Root>
 				<Dialog.Trigger
 					><Button size="sm" class="h-8 gap-1">
