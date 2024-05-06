@@ -8,9 +8,13 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
+	import type { PageData } from './$types';
 
 	import * as Table from '$lib/components/ui/table/index.js';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
+	import * as Dialog from '$lib/components/ui/dialog';
+	import CreateLeadForm from './create-lead-form.svelte';
+	export let data: PageData;
 </script>
 
 <main class="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-6 md:gap-8">
@@ -46,10 +50,17 @@
 					<File class="h-3.5 w-3.5" />
 					<span class="sr-only sm:not-sr-only sm:whitespace-nowrap"> Export </span>
 				</Button>
-				<Button size="sm" class="h-8 gap-1">
-					<CirclePlus class="h-3.5 w-3.5" />
-					<span class="sr-only sm:not-sr-only sm:whitespace-nowrap"> Add List </span>
-				</Button>
+				<Dialog.Root>
+					<Dialog.Trigger
+						><Button size="sm" class="h-8 gap-1">
+							<CirclePlus class="h-3.5 w-3.5" />
+							<span class="sr-only sm:not-sr-only sm:whitespace-nowrap"> Add New Lead </span>
+						</Button></Dialog.Trigger
+					>
+					<Dialog.Content class="h-svh overflow-y-scroll scroll-smooth p-10">
+						<CreateLeadForm data={data.form} />
+					</Dialog.Content>
+				</Dialog.Root>
 			</div>
 		</div>
 		<Tabs.Content value="all">

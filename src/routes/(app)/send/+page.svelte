@@ -36,7 +36,7 @@
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				destinations: [destination],
+				destinations: destination,
 				message: message
 			})
 		});

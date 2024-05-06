@@ -8,19 +8,22 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// Leads
+
 model Lead {
-  id            Int             @id @default(autoincrement())
-  firstname     String
-  lastname      String
-  contact_no    String?
-  email         String?         @unique
-  dns           Boolean         @default(true)
-  Addresses     Address[]
-  messages      Message[]
-  campaigns     Campaign[]      @relation("LeadToCampaign")
+  id          Int      @id @default(autoincrement())
+  firstname   String
+  lastname    String
+  contact_no  String?         // Optional field
+  email       String?         @unique
+  dns         Boolean         @default(true)
+  addressId   Int             // Foreign key for Address
+  Address     Address @relation(fields: [addressId], references: [id]) // Many-to-one relation
+  messages    Message[]
+  campaigns   Campaign[]      @relation("LeadToCampaign")
   CampaignLeads CampaignLeads[]
 }
+
+
 
 // Messages
 model Message {
@@ -125,7 +128,8 @@ model Customer {
   cancellation_date        DateTime?
   installation_appointment DateTime?
   dns                      Boolean           @default(true)
-  Addresses                Address[]
+  addressId   Int             // Foreign key for Address
+  Address     Address @relation(fields: [addressId], references: [id]) // Many-to-one relation
   customer_status          CustomerStatus
   customer_sub_status      CustomerSubStatus
   total_wifi               Boolean
@@ -150,19 +154,24 @@ model Bundle {
   activationFee  Int
 }
 
-// Addresses
+
+//Addresses
 model Address {
-  uprn         Int      @id
-  address1     String
-  address2     String?
-  street       String?
-  city         String
-  postcode     String
-  buildingType String?  @map("building_type")
-  account      Int?
-  siteType     String?  @map("site_type")
-  CustomerId   Int
-  Customer     Customer @relation(fields: [CustomerId], references: [id])
-  Lead         Lead?    @relation(fields: [leadId], references: [id])
-  leadId       Int?
+  id            Int       @id @default(autoincrement())
+  line1         String
+  line2         String?
+  line3         String?
+  line4         String?
+  line5         String?
+  line6         String?
+  postCode      String
+  country       String?
+  latitude      String?
+  longitude     String?
+  buildingType  String?   @map("building_type")
+  account       Int?
+  siteType      String?   @map("site_type")
+  Customers     Customer[] // Assumes an optional one-to-many relationship
+  Leads         Lead[]     // Assumes an optional one-to-many relationship
 }
+
