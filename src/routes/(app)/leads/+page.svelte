@@ -15,9 +15,10 @@
 	import * as Dialog from '$lib/components/ui/dialog';
 	import CreateLeadForm from './create-lead-form.svelte';
 	export let data: PageData;
+	console.log(data);
 </script>
 
-<main class="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-6 md:gap-8">
+<main class="grid flex-1 items-start p-4">
 	<div class="mx-2 grid w-full max-w-6xl gap-2">
 		<h1 class="text-3xl font-semibold">Leads</h1>
 		<p class="text-muted-foreground">Manage your leads</p>
@@ -65,171 +66,64 @@
 		</div>
 		<Tabs.Content value="all">
 			<Card.Root>
-				<Card.Content>
-					<Table.Root>
+				<Card.Content class="p-0">
+					<Table.Root class="overflow-auto">
 						<Table.Header>
 							<Table.Row>
-								<Table.Head class="hidden w-[300px] sm:table-cell">Name</Table.Head>
-								<Table.Head>Status</Table.Head>
-								<Table.Head class="hidden md:table-cell">Price</Table.Head>
-								<Table.Head class="hidden md:table-cell">Total Sales</Table.Head>
+								<Table.Head class="table-cell">First Name</Table.Head>
+								<Table.Head class="table-cell">Last Name</Table.Head>
+								<Table.Head class="table-cell">Contact Number</Table.Head>
+								<Table.Head class="table-cell">Email</Table.Head>
+								<Table.Head class="table-cell">Address</Table.Head>
+								<Table.Head class="table-cell">Postcode</Table.Head>
 								<Table.Head class="hidden md:table-cell">Created at</Table.Head>
-								<Table.Head>
+								<Table.Head class="table-cell">
 									<span class="sr-only">Actions</span>
 								</Table.Head>
 							</Table.Row>
 						</Table.Header>
 						<Table.Body>
-							<Table.Row>
-								<Table.Cell class="font-medium">Laser Lemonade Machine</Table.Cell>
-								<Table.Cell>
-									<Badge variant="outline">Draft</Badge>
-								</Table.Cell>
-								<Table.Cell class="hidden md:table-cell">$499.99</Table.Cell>
-								<Table.Cell class="hidden md:table-cell">25</Table.Cell>
-								<Table.Cell class="hidden md:table-cell">2023-07-12 10:42 AM</Table.Cell>
-								<Table.Cell>
-									<DropdownMenu.Root>
-										<DropdownMenu.Trigger asChild let:builder>
-											<Button aria-haspopup="true" size="icon" variant="ghost" builders={[builder]}>
-												<Ellipsis class="h-4 w-4" />
-												<span class="sr-only">Toggle menu</span>
-											</Button>
-										</DropdownMenu.Trigger>
-										<DropdownMenu.Content align="end">
-											<DropdownMenu.Label>Actions</DropdownMenu.Label>
-											<DropdownMenu.Item>Edit</DropdownMenu.Item>
-											<DropdownMenu.Item>Delete</DropdownMenu.Item>
-										</DropdownMenu.Content>
-									</DropdownMenu.Root>
-								</Table.Cell>
-							</Table.Row>
-							<Table.Row>
-								<Table.Cell class="font-medium">Hypernova Headphones</Table.Cell>
-								<Table.Cell>
-									<Badge variant="outline">Active</Badge>
-								</Table.Cell>
-								<Table.Cell class="hidden md:table-cell">$129.99</Table.Cell>
-								<Table.Cell class="hidden md:table-cell">100</Table.Cell>
-								<Table.Cell class="hidden md:table-cell">2023-10-18 03:21 PM</Table.Cell>
-								<Table.Cell>
-									<DropdownMenu.Root>
-										<DropdownMenu.Trigger asChild let:builder>
-											<Button builders={[builder]} aria-haspopup="true" size="icon" variant="ghost">
-												<Ellipsis class="h-4 w-4" />
-												<span class="sr-only">Toggle menu</span>
-											</Button>
-										</DropdownMenu.Trigger>
-										<DropdownMenu.Content align="end">
-											<DropdownMenu.Label>Actions</DropdownMenu.Label>
-											<DropdownMenu.Item>Edit</DropdownMenu.Item>
-											<DropdownMenu.Item>Delete</DropdownMenu.Item>
-										</DropdownMenu.Content>
-									</DropdownMenu.Root>
-								</Table.Cell>
-							</Table.Row>
-							<Table.Row>
-								<Table.Cell class="font-medium">AeroGlow Desk Lamp</Table.Cell>
-								<Table.Cell>
-									<Badge variant="outline">Active</Badge>
-								</Table.Cell>
-								<Table.Cell class="hidden md:table-cell">$39.99</Table.Cell>
-								<Table.Cell class="hidden md:table-cell">50</Table.Cell>
-								<Table.Cell class="hidden md:table-cell">2023-11-29 08:15 AM</Table.Cell>
-								<Table.Cell>
-									<DropdownMenu.Root>
-										<DropdownMenu.Trigger asChild let:builder>
-											<Button builders={[builder]} aria-haspopup="true" size="icon" variant="ghost">
-												<Ellipsis class="h-4 w-4" />
-												<span class="sr-only">Toggle menu</span>
-											</Button>
-										</DropdownMenu.Trigger>
-										<DropdownMenu.Content align="end">
-											<DropdownMenu.Label>Actions</DropdownMenu.Label>
-											<DropdownMenu.Item>Edit</DropdownMenu.Item>
-											<DropdownMenu.Item>Delete</DropdownMenu.Item>
-										</DropdownMenu.Content>
-									</DropdownMenu.Root>
-								</Table.Cell>
-							</Table.Row>
-							<Table.Row>
-								<Table.Cell class="font-medium">TechTonic Energy Drink</Table.Cell>
-								<Table.Cell>
-									<Badge variant="secondary">Draft</Badge>
-								</Table.Cell>
-								<Table.Cell class="hidden md:table-cell">$2.99</Table.Cell>
-								<Table.Cell class="hidden md:table-cell">0</Table.Cell>
-								<Table.Cell class="hidden md:table-cell">2023-12-25 11:59 PM</Table.Cell>
-								<Table.Cell>
-									<DropdownMenu.Root>
-										<DropdownMenu.Trigger asChild let:builder>
-											<Button builders={[builder]} aria-haspopup="true" size="icon" variant="ghost">
-												<Ellipsis class="h-4 w-4" />
-												<span class="sr-only">Toggle menu</span>
-											</Button>
-										</DropdownMenu.Trigger>
-										<DropdownMenu.Content align="end">
-											<DropdownMenu.Label>Actions</DropdownMenu.Label>
-											<DropdownMenu.Item>Edit</DropdownMenu.Item>
-											<DropdownMenu.Item>Delete</DropdownMenu.Item>
-										</DropdownMenu.Content>
-									</DropdownMenu.Root>
-								</Table.Cell>
-							</Table.Row>
-							<Table.Row>
-								<Table.Cell class="font-medium">Gamer Gear Pro Controller</Table.Cell>
-								<Table.Cell>
-									<Badge variant="outline">Active</Badge>
-								</Table.Cell>
-								<Table.Cell class="hidden md:table-cell">$59.99</Table.Cell>
-								<Table.Cell class="hidden md:table-cell">75</Table.Cell>
-								<Table.Cell class="hidden md:table-cell">2024-01-01 12:00 AM</Table.Cell>
-								<Table.Cell>
-									<DropdownMenu.Root>
-										<DropdownMenu.Trigger asChild let:builder>
-											<Button builders={[builder]} aria-haspopup="true" size="icon" variant="ghost">
-												<Ellipsis class="h-4 w-4" />
-												<span class="sr-only">Toggle menu</span>
-											</Button>
-										</DropdownMenu.Trigger>
-										<DropdownMenu.Content align="end">
-											<DropdownMenu.Label>Actions</DropdownMenu.Label>
-											<DropdownMenu.Item>Edit</DropdownMenu.Item>
-											<DropdownMenu.Item>Delete</DropdownMenu.Item>
-										</DropdownMenu.Content>
-									</DropdownMenu.Root>
-								</Table.Cell>
-							</Table.Row>
-							<Table.Row>
-								<Table.Cell class="font-medium">Luminous VR Headset</Table.Cell>
-								<Table.Cell>
-									<Badge variant="outline">Active</Badge>
-								</Table.Cell>
-								<Table.Cell class="hidden md:table-cell">$199.99</Table.Cell>
-								<Table.Cell class="hidden md:table-cell">30</Table.Cell>
-								<Table.Cell class="hidden md:table-cell">2024-02-14 02:14 PM</Table.Cell>
-								<Table.Cell>
-									<DropdownMenu.Root>
-										<DropdownMenu.Trigger asChild let:builder>
-											<Button builders={[builder]} aria-haspopup="true" size="icon" variant="ghost">
-												<Ellipsis class="h-4 w-4" />
-												<span class="sr-only">Toggle menu</span>
-											</Button>
-										</DropdownMenu.Trigger>
-										<DropdownMenu.Content align="end">
-											<DropdownMenu.Label>Actions</DropdownMenu.Label>
-											<DropdownMenu.Item>Edit</DropdownMenu.Item>
-											<DropdownMenu.Item>Delete</DropdownMenu.Item>
-										</DropdownMenu.Content>
-									</DropdownMenu.Root>
-								</Table.Cell>
-							</Table.Row>
+							{#each data.leads as item}
+								<!-- content here -->
+								<Table.Row>
+									<Table.Cell class="font-medium">{item.firstname}</Table.Cell>
+
+									<Table.Cell class="table-cell">{item.lastname}</Table.Cell>
+									<Table.Cell class="table-cell">{item.contact_no}</Table.Cell>
+									<Table.Cell class="table-cell">{item.email}</Table.Cell>
+									<Table.Cell class="table-cell">{item.Address.line1}</Table.Cell>
+									<Table.Cell class="table-cell">{item.Address.postCode}</Table.Cell>
+									<Table.Cell class="hidden md:table-cell"
+										>{item.created.toLocaleString()}</Table.Cell
+									>
+									<Table.Cell>
+										<DropdownMenu.Root>
+											<DropdownMenu.Trigger asChild let:builder>
+												<Button
+													aria-haspopup="true"
+													size="icon"
+													variant="ghost"
+													builders={[builder]}
+												>
+													<Ellipsis class="h-4 w-4" />
+													<span class="sr-only">Toggle menu</span>
+												</Button>
+											</DropdownMenu.Trigger>
+											<DropdownMenu.Content align="end">
+												<DropdownMenu.Label>Actions</DropdownMenu.Label>
+												<DropdownMenu.Item>Edit</DropdownMenu.Item>
+												<DropdownMenu.Item>Delete</DropdownMenu.Item>
+											</DropdownMenu.Content>
+										</DropdownMenu.Root>
+									</Table.Cell>
+								</Table.Row>
+							{/each}
 						</Table.Body>
 					</Table.Root>
 				</Card.Content>
 				<Card.Footer>
 					<div class="text-xs text-muted-foreground">
-						Showing <strong>1-10</strong> of <strong>32</strong> products
+						Showing <strong>1-10</strong> of <strong>{data.leads.length}</strong> leads
 					</div>
 				</Card.Footer>
 			</Card.Root>

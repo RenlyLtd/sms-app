@@ -19,26 +19,26 @@
 	let fetched = false;
 
 	const form = superForm(data, {
-		validators: zodClient(formSchema)
-		// onSubmit() {
-		// 	submitting = true;
-		// },
-		// onResult({ result }) {
-		// 	try {
-		// 		if (result.type == 'success') {
-		// 			submitting = false;
-		// 			toast.success('Your new list has been created', {
-		// 				description: 'To send SMS to this list, assign to a campaign.'
-		// 			});
-		// 			const closeButton = document.querySelector('[data-dialog-close]') as HTMLButtonElement;
-		// 			if (closeButton) {
-		// 				closeButton.click(); // Simulates a user clicking the close button
-		// 			}
-		// 		}
-		// 	} catch (error) {
-		// 		console.error(error);
-		// 	}
-		// }
+		validators: zodClient(formSchema),
+		onSubmit() {
+			submitting = true;
+		},
+		onResult({ result }) {
+			try {
+				if (result.type == 'success') {
+					submitting = false;
+					toast.success('A new lead has been created', {
+						description: 'To send SMS to this contact, assign to a list.'
+					});
+					const closeButton = document.querySelector('[data-dialog-close]') as HTMLButtonElement;
+					if (closeButton) {
+						closeButton.click(); // Simulates a user clicking the close button
+					}
+				}
+			} catch (error) {
+				console.error(error);
+			}
+		}
 	});
 
 	const { form: formData, enhance } = form;
@@ -266,7 +266,4 @@
 			{/if}</Form.Button
 		>
 	</div>
-	{#if browser}
-		<SuperDebug data={$formData} />
-	{/if}
 </form>

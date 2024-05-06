@@ -7,7 +7,18 @@ import { zod } from 'sveltekit-superforms/adapters';
 
 export const load: PageServerLoad = async () => {
 	return {
-		leads: await db.lead.findMany(),
+		leads: await db.lead.findMany({
+			include: {
+				Address: true, // Include related Address
+				lists: {
+					// Include related lists through the join table
+					include: {
+						list: true // This includes the actual List details
+					}
+				}
+			}
+		}),
+
 		form: await superValidate(zod(formSchema))
 	};
 };
@@ -33,15 +44,15 @@ export const actions: Actions = {
 					line4: data.line4,
 					line5: data.line5,
 					line6: data.line6,
-					postcode: data.postcode
+					postCode: data.postcode
 				}
 			});
 
 			// Then create the lead, linking the newly created address
 			const lead = await db.lead.create({
 				data: {
-					firstname: data.first_name,
-					lastname: data.last_name,
+					firstname: data.firstname,
+					lastname: data.lastname,
 					contact_no: data.phone,
 					email: data.email,
 					addressId: address.id // Assuming 'AddressId' is the foreign key in 'lead' table

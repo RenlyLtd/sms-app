@@ -8,22 +8,29 @@ generator client {
   provider = "prisma-client-js"
 }
 
-
 model Lead {
-  id          Int      @id @default(autoincrement())
-  firstname   String
-  lastname    String
-  contact_no  String?         // Optional field
-  email       String?         @unique
-  dns         Boolean         @default(true)
-  addressId   Int             // Foreign key for Address
-  Address     Address @relation(fields: [addressId], references: [id]) // Many-to-one relation
-  messages    Message[]
-  campaigns   Campaign[]      @relation("LeadToCampaign")
-  CampaignLeads CampaignLeads[]
+  id         Int          @id @default(autoincrement())
+  firstname  String
+  lastname   String
+  contact_no String? // Optional field
+  email      String?      @unique
+  dns        Boolean      @default(true)
+  addressId  Int // Foreign key for Address
+  Address    Address      @relation(fields: [addressId], references: [id]) // Many-to-one relation
+  messages   Message[]
+  lists      ListOnLead[]
+  created    DateTime     @default(now())
+  updated    DateTime     @updatedAt
 }
 
+model ListOnLead {
+  listId Int
+  leadId Int
+  list   List @relation(fields: [listId], references: [list_id])
+  lead   Lead @relation(fields: [leadId], references: [id])
 
+  @@id([listId, leadId])
+}
 
 // Messages
 model Message {
@@ -51,42 +58,37 @@ model DeliveryReport {
 
 // Lists
 model List {
-  list_id     Int        @id @default(autoincrement())
-  name        String
-  description String?
-  type        String
-  lead_count  Int        @default(0)
-  created     DateTime   @default(now())
-  updated     DateTime   @updatedAt
-  tags        String[]
-  campaigns   Campaign[]
+  list_id       Int             @id @default(autoincrement())
+  name          String
+  description   String?
+  type          String
+  created       DateTime        @default(now())
+  updated       DateTime        @updatedAt
+  tags          String[]
+  leads         ListOnLead[]
+  campaigns     Campaign[]      @relation("ListToCampaign")
+  CampaignLists CampaignLists[]
 }
 
 // Campaigns
 model Campaign {
-  id              Int             @id @default(autoincrement())
-  name            String
-  list_id         Int
-  List            List            @relation(fields: [list_id], references: [list_id])
-  created         DateTime        @default(now())
-  updated         DateTime        @updatedAt
-  ended           DateTime?
-  clicks          Int             @default(0)
-  unsubscriptions Int             @default(0)
-  status          String
-  conversions     Int             @default(0)
-  leads           Lead[]          @relation("LeadToCampaign")
-  CampaignLeads   CampaignLeads[]
+  id            Int             @id @default(autoincrement())
+  name          String
+  lists         List[]          @relation("ListToCampaign")
+  created       DateTime        @default(now())
+  updated       DateTime        @updatedAt
+  ended         DateTime?
+  status        String
+  CampaignLists CampaignLists[]
 }
 
-// Many-to-many helper table for explicit relation (If Prisma does not handle this automatically)
-model CampaignLeads {
-  campaign    Campaign @relation(fields: [campaign_id], references: [id])
-  campaign_id Int
-  lead        Lead     @relation(fields: [lead_id], references: [id])
-  lead_id     Int
+model CampaignLists {
+  listId     Int
+  campaignId Int
+  List       List     @relation(fields: [listId], references: [list_id])
+  Campaign   Campaign @relation(fields: [campaignId], references: [id])
 
-  @@id([campaign_id, lead_id])
+  @@id([listId, campaignId])
 }
 
 enum CustomerStatus {
@@ -128,8 +130,8 @@ model Customer {
   cancellation_date        DateTime?
   installation_appointment DateTime?
   dns                      Boolean           @default(true)
-  addressId   Int             // Foreign key for Address
-  Address     Address @relation(fields: [addressId], references: [id]) // Many-to-one relation
+  addressId                Int // Foreign key for Address
+  Address                  Address           @relation(fields: [addressId], references: [id]) // Many-to-one relation
   customer_status          CustomerStatus
   customer_sub_status      CustomerSubStatus
   total_wifi               Boolean
@@ -154,24 +156,22 @@ model Bundle {
   activationFee  Int
 }
 
-
 //Addresses
 model Address {
-  id            Int       @id @default(autoincrement())
-  line1         String
-  line2         String?
-  line3         String?
-  line4         String?
-  line5         String?
-  line6         String?
-  postCode      String
-  country       String?
-  latitude      String?
-  longitude     String?
-  buildingType  String?   @map("building_type")
-  account       Int?
-  siteType      String?   @map("site_type")
-  Customers     Customer[] // Assumes an optional one-to-many relationship
-  Leads         Lead[]     // Assumes an optional one-to-many relationship
+  id           Int        @id @default(autoincrement())
+  line1        String
+  line2        String?
+  line3        String?
+  line4        String?
+  line5        String?
+  line6        String?
+  postCode     String
+  country      String?
+  latitude     String?
+  longitude    String?
+  buildingType String?    @map("building_type")
+  account      Int?
+  siteType     String?    @map("site_type")
+  Customers    Customer[] // Assumes an optional one-to-many relationship
+  Leads        Lead[] // Assumes an optional one-to-many relationship
 }
-
