@@ -38,6 +38,12 @@
 
 	const { form: formData, enhance } = form;
 	import InputChip from '$lib/components/ui/input-chip/Input-chip.svelte';
+	import * as Select from '$lib/components/ui/select/index.js';
+
+	const listType = [
+		{ value: 'Public', label: 'Public' },
+		{ value: 'Private', label: 'Private' }
+	];
 </script>
 
 <h2 class="text-xl font-bold">Create a new List</h2>
@@ -49,6 +55,26 @@
 			<Input {...attrs} bind:value={$formData.name} />
 		</Form.Control>
 		<Form.Description>This is public name of your list.</Form.Description>
+		<Form.FieldErrors />
+	</Form.Field>
+	<Form.Field {form} name="type">
+		<Form.Control let:attrs>
+			<Form.Label>Type</Form.Label>
+
+			<Select.Root>
+				<Select.Trigger class="w-[180px]">
+					<Select.Value placeholder="Select a list type" />
+				</Select.Trigger>
+				<Select.Content>
+					<Select.Group>
+						{#each listType as type}
+							<Select.Item value={type.value} label={type.label}>{type.label}</Select.Item>
+						{/each}
+					</Select.Group>
+				</Select.Content>
+				<Select.Input name="type" />
+			</Select.Root>
+		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
 	<Form.Field {form} name="account">

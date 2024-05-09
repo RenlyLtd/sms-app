@@ -8,7 +8,7 @@
 
 <Toaster />
 
-<div class="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
+<div class="grid min-h-screen w-full md:grid-cols-[150px_1fr]">
 	<Sidebar {page} />
 	<div class="flex flex-col">
 		<Topbar {page} />

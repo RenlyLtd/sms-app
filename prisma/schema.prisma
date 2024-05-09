@@ -61,6 +61,7 @@ model List {
   list_id       Int             @id @default(autoincrement())
   name          String
   description   String?
+  account String
   type          String
   created       DateTime        @default(now())
   updated       DateTime        @updatedAt

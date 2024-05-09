@@ -1,23 +1,29 @@
-import type { PageServerLoad, Actions } from './$types';
-import { db } from '$lib/server/prisma';
+import type { PageServerLoad, Actions } from '../$types';
 import { fail } from '@sveltejs/kit';
-import { superValidate } from 'sveltekit-superforms';
-import { formSchema } from './schema';
-import { zod } from 'sveltekit-superforms/adapters';
+import { db } from '$lib/server/prisma';
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({ params }) => {
+	const id = parseInt(params.id, 10);
+
 	return {
-		lists: await db.list.findMany({
+		list: await db.list.findUnique({
+			where: {
+				list_id: id
+			},
 			include: {
 				leads: {
 					// Include related lists through the join table
 					include: {
-						lead: true // This includes the actual List details
+						lead: {
+							include: {
+								Address: true
+							}
+						}
+						// This includes the actual List details
 					}
 				}
 			}
-		}),
-		form: await superValidate(zod(formSchema))
+		})
 	};
 };
 

@@ -7,15 +7,30 @@
 	import CreateListForm from './create-list-form.svelte';
 	import ImportCsvForm from './import-csv-form.svelte';
 	export let data: PageData;
-
-	import { Badge } from '$lib/components/ui/badge/index.js';
+	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
+
+	import { enhance } from '$app/forms';
+	let openDialogId = null; // Holds the ID of the item whose dialog is open
+	let dialogOpen = false;
+	function openDialog(id: number) {
+		dialogOpen = true;
+		openDialogId = id; // Set this ID when the delete button is clicked
+	}
+
+	function closeDialog() {
+		dialogOpen = false;
+		openDialogId = null; // Reset when closing the dialog
+	}
+	console.log(data);
+
+	$: ({ lists } = data);
+	import { Badge } from '$lib/components/ui/badge/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as Dialog from '$lib/components/ui/dialog';
 
 	import * as Table from '$lib/components/ui/table/index.js';
-	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import { Input } from '$lib/components/ui/input';
 	import Search from 'lucide-svelte/icons/search';
 	import * as Pagination from '$lib/components/ui/pagination';
@@ -45,6 +60,7 @@
 		};
 	});
 	import { Label } from '$lib/components/ui/label';
+	import { goto } from '$app/navigation';
 </script>
 
 <svelte:window on:resize={handleResize} />
@@ -112,167 +128,41 @@
 			<Table.Root>
 				<Table.Header>
 					<Table.Row>
-						<Table.Head class="hidden w-[300px] sm:table-cell">Name</Table.Head>
+						<Table.Head class="hidden  sm:table-cell">Name</Table.Head>
 						<Table.Head>Type</Table.Head>
-						<Table.Head class="hidden md:table-cell">Description</Table.Head>
-						<Table.Head class="hidden md:table-cell">Total Leads</Table.Head>
+						<Table.Head class="hidden w-[300px] md:table-cell">Description</Table.Head>
+						<Table.Head class="hidden md:table-cell">Account</Table.Head>
+						<Table.Head class="hidden md:table-cell">Tags</Table.Head>
+						<Table.Head class="hidden md:table-cell">Leads</Table.Head>
 						<Table.Head class="hidden md:table-cell">Created at</Table.Head>
-						<Table.Head>
-							<span class="sr-only">Actions</span>
-						</Table.Head>
 					</Table.Row>
 				</Table.Header>
 				<Table.Body>
-					<Table.Row>
-						<Table.Cell class="font-medium">Laser Lemonade Machine</Table.Cell>
-						<Table.Cell>
-							<Badge variant="outline">Draft</Badge>
-						</Table.Cell>
-						<Table.Cell class="hidden md:table-cell">$499.99</Table.Cell>
-						<Table.Cell class="hidden md:table-cell">25</Table.Cell>
-						<Table.Cell class="hidden md:table-cell">2023-07-12 10:42 AM</Table.Cell>
-						<Table.Cell>
-							<DropdownMenu.Root>
-								<DropdownMenu.Trigger asChild let:builder>
-									<Button aria-haspopup="true" size="icon" variant="ghost" builders={[builder]}>
-										<Ellipsis class="h-4 w-4" />
-										<span class="sr-only">Toggle menu</span>
-									</Button>
-								</DropdownMenu.Trigger>
-								<DropdownMenu.Content align="end">
-									<DropdownMenu.Label>Actions</DropdownMenu.Label>
-									<DropdownMenu.Item>Edit</DropdownMenu.Item>
-									<DropdownMenu.Item>Delete</DropdownMenu.Item>
-								</DropdownMenu.Content>
-							</DropdownMenu.Root>
-						</Table.Cell>
-					</Table.Row>
-					<Table.Row>
-						<Table.Cell class="font-medium">Hypernova Headphones</Table.Cell>
-						<Table.Cell>
-							<Badge variant="outline">Active</Badge>
-						</Table.Cell>
-						<Table.Cell class="hidden md:table-cell">$129.99</Table.Cell>
-						<Table.Cell class="hidden md:table-cell">100</Table.Cell>
-						<Table.Cell class="hidden md:table-cell">2023-10-18 03:21 PM</Table.Cell>
-						<Table.Cell>
-							<DropdownMenu.Root>
-								<DropdownMenu.Trigger asChild let:builder>
-									<Button builders={[builder]} aria-haspopup="true" size="icon" variant="ghost">
-										<Ellipsis class="h-4 w-4" />
-										<span class="sr-only">Toggle menu</span>
-									</Button>
-								</DropdownMenu.Trigger>
-								<DropdownMenu.Content align="end">
-									<DropdownMenu.Label>Actions</DropdownMenu.Label>
-									<DropdownMenu.Item>Edit</DropdownMenu.Item>
-									<DropdownMenu.Item>Delete</DropdownMenu.Item>
-								</DropdownMenu.Content>
-							</DropdownMenu.Root>
-						</Table.Cell>
-					</Table.Row>
-					<Table.Row>
-						<Table.Cell class="font-medium">AeroGlow Desk Lamp</Table.Cell>
-						<Table.Cell>
-							<Badge variant="outline">Active</Badge>
-						</Table.Cell>
-						<Table.Cell class="hidden md:table-cell">$39.99</Table.Cell>
-						<Table.Cell class="hidden md:table-cell">50</Table.Cell>
-						<Table.Cell class="hidden md:table-cell">2023-11-29 08:15 AM</Table.Cell>
-						<Table.Cell>
-							<DropdownMenu.Root>
-								<DropdownMenu.Trigger asChild let:builder>
-									<Button builders={[builder]} aria-haspopup="true" size="icon" variant="ghost">
-										<Ellipsis class="h-4 w-4" />
-										<span class="sr-only">Toggle menu</span>
-									</Button>
-								</DropdownMenu.Trigger>
-								<DropdownMenu.Content align="end">
-									<DropdownMenu.Label>Actions</DropdownMenu.Label>
-									<DropdownMenu.Item>Edit</DropdownMenu.Item>
-									<DropdownMenu.Item>Delete</DropdownMenu.Item>
-								</DropdownMenu.Content>
-							</DropdownMenu.Root>
-						</Table.Cell>
-					</Table.Row>
-					<Table.Row>
-						<Table.Cell class="font-medium">TechTonic Energy Drink</Table.Cell>
-						<Table.Cell>
-							<Badge variant="secondary">Draft</Badge>
-						</Table.Cell>
-						<Table.Cell class="hidden md:table-cell">$2.99</Table.Cell>
-						<Table.Cell class="hidden md:table-cell">0</Table.Cell>
-						<Table.Cell class="hidden md:table-cell">2023-12-25 11:59 PM</Table.Cell>
-						<Table.Cell>
-							<DropdownMenu.Root>
-								<DropdownMenu.Trigger asChild let:builder>
-									<Button builders={[builder]} aria-haspopup="true" size="icon" variant="ghost">
-										<Ellipsis class="h-4 w-4" />
-										<span class="sr-only">Toggle menu</span>
-									</Button>
-								</DropdownMenu.Trigger>
-								<DropdownMenu.Content align="end">
-									<DropdownMenu.Label>Actions</DropdownMenu.Label>
-									<DropdownMenu.Item>Edit</DropdownMenu.Item>
-									<DropdownMenu.Item>Delete</DropdownMenu.Item>
-								</DropdownMenu.Content>
-							</DropdownMenu.Root>
-						</Table.Cell>
-					</Table.Row>
-					<Table.Row>
-						<Table.Cell class="font-medium">Gamer Gear Pro Controller</Table.Cell>
-						<Table.Cell>
-							<Badge variant="outline">Active</Badge>
-						</Table.Cell>
-						<Table.Cell class="hidden md:table-cell">$59.99</Table.Cell>
-						<Table.Cell class="hidden md:table-cell">75</Table.Cell>
-						<Table.Cell class="hidden md:table-cell">2024-01-01 12:00 AM</Table.Cell>
-						<Table.Cell>
-							<DropdownMenu.Root>
-								<DropdownMenu.Trigger asChild let:builder>
-									<Button builders={[builder]} aria-haspopup="true" size="icon" variant="ghost">
-										<Ellipsis class="h-4 w-4" />
-										<span class="sr-only">Toggle menu</span>
-									</Button>
-								</DropdownMenu.Trigger>
-								<DropdownMenu.Content align="end">
-									<DropdownMenu.Label>Actions</DropdownMenu.Label>
-									<DropdownMenu.Item>Edit</DropdownMenu.Item>
-									<DropdownMenu.Item>Delete</DropdownMenu.Item>
-								</DropdownMenu.Content>
-							</DropdownMenu.Root>
-						</Table.Cell>
-					</Table.Row>
-					<Table.Row>
-						<Table.Cell class="font-medium">Luminous VR Headset</Table.Cell>
-						<Table.Cell>
-							<Badge variant="outline">Active</Badge>
-						</Table.Cell>
-						<Table.Cell class="hidden md:table-cell">$199.99</Table.Cell>
-						<Table.Cell class="hidden md:table-cell">30</Table.Cell>
-						<Table.Cell class="hidden md:table-cell">2024-02-14 02:14 PM</Table.Cell>
-						<Table.Cell>
-							<DropdownMenu.Root>
-								<DropdownMenu.Trigger asChild let:builder>
-									<Button builders={[builder]} aria-haspopup="true" size="icon" variant="ghost">
-										<Ellipsis class="h-4 w-4" />
-										<span class="sr-only">Toggle menu</span>
-									</Button>
-								</DropdownMenu.Trigger>
-								<DropdownMenu.Content align="end">
-									<DropdownMenu.Label>Actions</DropdownMenu.Label>
-									<DropdownMenu.Item>Edit</DropdownMenu.Item>
-									<DropdownMenu.Item>Delete</DropdownMenu.Item>
-								</DropdownMenu.Content>
-							</DropdownMenu.Root>
-						</Table.Cell>
-					</Table.Row>
+					{#each lists as list}
+						<!-- content here -->
+						<Table.Row on:click={goto(`/lists/${list.list_id}`)} class="cursor-pointer">
+							<Table.Cell class="font-medium">{list.name}</Table.Cell>
+							<Table.Cell>
+								{list.type}
+							</Table.Cell>
+							<Table.Cell class="hidden md:table-cell">{list.description}</Table.Cell>
+							<Table.Cell class="hidden md:table-cell">{list.account}</Table.Cell>
+							<Table.Cell class="hidden md:table-cell">
+								{#each list.tags as tag}
+									<Badge class="m-0.5">{tag}</Badge>
+									<!-- content here -->
+								{/each}
+							</Table.Cell>
+							<Table.Cell class="hidden md:table-cell">{list.leads.length}</Table.Cell>
+							<Table.Cell class="hidden md:table-cell">{list.created.toLocaleString()}</Table.Cell>
+						</Table.Row>
+					{/each}
 				</Table.Body>
 			</Table.Root>
 		</Card.Content>
 		<Card.Footer>
 			<div class="text-xs text-muted-foreground">
-				Showing <strong>1-10</strong> of <strong>32</strong> products
+				Showing <strong>1-10</strong> of <strong>32</strong> lists
 			</div>
 
 			<Pagination.Root {count} {perPage} {siblingCount} let:pages let:currentPage>
