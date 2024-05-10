@@ -4,7 +4,8 @@ import { db } from '$lib/server/prisma';
 import { superValidate } from 'sveltekit-superforms';
 import { formSchema } from './schema';
 import { zod } from 'sveltekit-superforms/adapters';
-import Papa from 'papaparse';
+
+
 
 export const load: PageServerLoad = async ({ params }) => {
 	const id = parseInt(params.id, 10);
