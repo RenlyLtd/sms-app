@@ -99,18 +99,6 @@
 
 			<Dialog.Root>
 				<Dialog.Trigger
-					><Button size="sm" variant="outline" class="h-8 gap-1">
-						<FileSpreadsheet class="h-3.5 w-3.5" />
-						<span class="sr-only sm:not-sr-only sm:whitespace-nowrap"> Import CSV </span>
-					</Button></Dialog.Trigger
-				>
-				<Dialog.Content>
-					<ImportCsvForm data={data.form} />
-				</Dialog.Content>
-			</Dialog.Root>
-
-			<Dialog.Root>
-				<Dialog.Trigger
 					><Button size="sm" class="h-8 gap-1">
 						<CirclePlus class="h-3.5 w-3.5" />
 						<span class="sr-only sm:not-sr-only sm:whitespace-nowrap"> Add New List </span>

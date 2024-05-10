@@ -2,8 +2,10 @@
 	export let data: PageData;
 	const { list } = data;
 	import { enhance } from '$app/forms';
-
+	import File from 'lucide-svelte/icons/file';
+	import ListFilter from 'lucide-svelte/icons/list-filter';
 	import Ellipsis from 'lucide-svelte/icons/ellipsis';
+	import CirclePlus from 'lucide-svelte/icons/circle-plus';
 
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
@@ -12,18 +14,18 @@
 
 	import * as Table from '$lib/components/ui/table/index.js';
 
-	console.log(data);
-
 	let showStatusBar = true;
 	let showActivityBar = false;
 	let showPanel = false;
 
 	import Check from 'lucide-svelte/icons/check';
 	import ChevronsUpDown from 'lucide-svelte/icons/chevrons-up-down';
+	import ChevronDown from 'lucide-svelte/icons/chevron-down';
 	import * as Command from '$lib/components/ui/command/index.js';
 	import * as Popover from '$lib/components/ui/popover/index.js';
 	import { cn } from '$lib/utils.js';
 	import { tick } from 'svelte';
+	import { Description } from 'formsnap';
 
 	const frameworks = [
 		{
@@ -62,71 +64,57 @@
 			document.getElementById(triggerId)?.focus();
 		});
 	}
+
+	import { Badge } from '$lib/components/ui/badge';
+	import * as Dialog from '$lib/components/ui/dialog';
+	import FileSpreadsheet from 'lucide-svelte/icons/file-spreadsheet';
+	import ImportCsvForm from './import-csv-form.svelte';
+	import CreateLeadForm from './create-lead-form.svelte';
 </script>
 
 <main class="m-4 space-y-4">
-	<div class="mx-2 grid w-full max-w-6xl gap-2">
-		<h1 class="text-3xl font-semibold">{list.name}</h1>
-		<p class="text-muted-foreground">{list.description}</p>
-	</div>
-	<p>List ID: {list.list_id}</p>
-	<p>Created: {list.created}</p>
-	<p>Tags: {list.tags}</p>
-	<p>Account: {list.account}</p>
+	<Card.Root class="border-none shadow-none">
+		<Card.Header class="flex flex-row justify-between ">
+			<div class="space-y-1">
+				<h1 class="text-3xl font-semibold">{list.name}</h1>
 
-	<DropdownMenu.Root>
-		<DropdownMenu.Trigger asChild let:builder>
-			<Button variant="outline" builders={[builder]}>Open</Button>
-		</DropdownMenu.Trigger>
-		<DropdownMenu.Content class="w-56">
-			<DropdownMenu.Label>Appearance</DropdownMenu.Label>
-			<DropdownMenu.Separator />
-			<DropdownMenu.CheckboxItem bind:checked={showStatusBar}>Status Bar</DropdownMenu.CheckboxItem>
-			<DropdownMenu.CheckboxItem bind:checked={showActivityBar} disabled>
-				Activity Bar
-			</DropdownMenu.CheckboxItem>
-			<DropdownMenu.CheckboxItem bind:checked={showPanel}>Panel</DropdownMenu.CheckboxItem>
-		</DropdownMenu.Content>
-	</DropdownMenu.Root>
-
-	<form use:enhance method="POST" action="?/addLeadToList">
-		<Button type="submit">Add Lead</Button>
-	</form>
-
-	<Popover.Root bind:open let:ids>
-		<Popover.Trigger asChild let:builder>
-			<Button
-				builders={[builder]}
-				variant="outline"
-				role="combobox"
-				aria-expanded={open}
-				class="w-[200px] justify-between"
-			>
-				{selectedValue}
-				<ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
-			</Button>
-		</Popover.Trigger>
-		<Popover.Content class="w-[200px] p-0">
-			<Command.Root>
-				<Command.Input placeholder="Search framework..." />
-				<Command.Empty>No framework found.</Command.Empty>
-				<Command.Group>
-					{#each frameworks as framework}
-						<Command.Item
-							value={framework.value}
-							onSelect={(currentValue) => {
-								value = currentValue;
-								closeAndFocusTrigger(ids.trigger);
-							}}
-						>
-							<Check class={cn('mr-2 h-4 w-4', value !== framework.value && 'text-transparent')} />
-							{framework.label}
-						</Command.Item>
+				<Card.Description class="text-lg">
+					{list.account}
+				</Card.Description>
+				<div class="flex h-fit gap-1">
+					{#each list.tags as item}
+						<!-- content here -->
+						<Badge>{item}</Badge>
 					{/each}
-				</Command.Group>
-			</Command.Root>
-		</Popover.Content>
-	</Popover.Root>
+				</div>
+			</div>
+			<div class="flex gap-2">
+				<Dialog.Root>
+					<Dialog.Trigger
+						><Button size="sm" variant="outline" class="h-8 gap-1">
+							<FileSpreadsheet class="h-3.5 w-3.5" />
+							<span class="sr-only sm:not-sr-only sm:whitespace-nowrap"> Import CSV </span>
+						</Button></Dialog.Trigger
+					>
+					<Dialog.Content>
+						<ImportCsvForm data={data.form} />
+					</Dialog.Content>
+				</Dialog.Root>
+
+				<Dialog.Root>
+					<Dialog.Trigger
+						><Button size="sm" class="h-8 gap-1">
+							<CirclePlus class="h-3.5 w-3.5" />
+							<span class="sr-only sm:not-sr-only sm:whitespace-nowrap"> Add New Lead </span>
+						</Button></Dialog.Trigger
+					>
+					<Dialog.Content>
+						<CreateLeadForm data={data.form} list={data.list} />
+					</Dialog.Content>
+				</Dialog.Root>
+			</div>
+		</Card.Header>
+	</Card.Root>
 
 	<Card.Root>
 		<Card.Content class="p-0">
