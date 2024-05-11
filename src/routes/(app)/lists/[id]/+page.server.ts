@@ -1,17 +1,16 @@
 import type { PageServerLoad, Actions, RequestEvent } from '../$types';
-import { fail } from '@sveltejs/kit';
+import Papa from 'papaparse';
 import { db } from '$lib/server/prisma';
-import { superValidate } from 'sveltekit-superforms';
-import { formSchema } from './schema';
+import { superValidate, fail, message } from 'sveltekit-superforms';
+import { formSchema, csvSchema } from './schema';
 import { zod } from 'sveltekit-superforms/adapters';
-
-
 
 export const load: PageServerLoad = async ({ params }) => {
 	const id = parseInt(params.id, 10);
 
 	return {
 		form: await superValidate(zod(formSchema)),
+		csvForm: await superValidate(zod(csvSchema)),
 		list: await db.list.findUnique({
 			where: {
 				list_id: id
@@ -117,21 +116,56 @@ export const actions: Actions = {
 			return fail(500, { message: 'Could not create the lead.' });
 		}
 	},
-	importCSV: async (request) => {
-		const files = request.body.get('files');
-		const csvFile = files.get('csv');
+	importCSV: async ({ request }) => {
+		const csvForm = await superValidate(request, zod(csvSchema));
+
+		if (!csvForm.valid) {
+			return fail(400, { csvForm });
+		}
+
+		const readableCsv = csvForm.data.csvFile;
+		const fileContent = await readableCsv.text();
 
 		return new Promise((resolve, reject) => {
-			Papa.parse(csvFile.stream(), {
+			Papa.parse(fileContent, {
 				header: true,
+				skipEmptyLines: true,
 				complete: async (results) => {
 					const data = results.data;
-					// Assuming `data` is an array of objects with `name` and `email` properties
 					try {
 						for (const item of data) {
-							await prisma.user.create({
-								data: item
-							});
+
+							try {
+								// Create the address first
+								const address = await db.address.create({
+									data: {
+										line1: data.line1,
+										line2: data.line2,
+										line3: data.line3,
+										line4: data.line4,
+										line5: data.line5,
+										line6: data.line6,
+										postCode: data.postcode
+									}
+								});
+					
+								// Then create the lead, linking the newly created address
+								const lead = await db.lead.create({
+									data: {
+										firstname: data.firstname,
+										lastname: data.lastname,
+										contact_no: data.phone,
+										email: data.email,
+										addressId: address.id // Assuming 'AddressId' is the foreign key in 'lead' table
+									}
+								});
+					
+								await db.listOnLead.create({
+									data: {
+										leadId: lead.id,
+										listId: listid
+									}
+								});
 						}
 						resolve({ status: 200, body: { message: 'Data uploaded successfully' } });
 					} catch (error) {

@@ -14,4 +14,12 @@ export const formSchema = z.object({
 	postcode: z.string()
 });
 
+export const csvSchema = z.object({
+	csvFile: z
+		.instanceof(File, { message: 'Please upload a file.' })
+		.refine((f) => f.size < 100_000, 'Max 100 kB upload size.')
+		.refine((f) => f.type === 'text/csv', 'Only CSV files are allowed.')
+});
+
+export type CSVSchema = typeof csvSchema;
 export type FormSchema = typeof formSchema;

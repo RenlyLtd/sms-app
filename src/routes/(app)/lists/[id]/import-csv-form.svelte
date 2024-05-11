@@ -1,23 +1,24 @@
 <script lang="ts">
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
-	import { formSchema, type FormSchema } from './schema';
-	import {
+	import { csvSchema, type CSVSchema } from './schema';
+	import SuperDebug, {
 		type SuperValidated,
 		type Infer,
 		type FormResult,
-		superForm
+		superForm,
+		fileProxy
 	} from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import LoaderCircle from 'lucide-svelte/icons/loader-circle';
 	import { toast } from 'svelte-sonner';
 
-	export let data: SuperValidated<Infer<FormSchema>>;
+	export let data: SuperValidated<Infer<CSVSchema>>;
+	console.log(data);
 
 	let submitting = false;
-
-	const form = superForm(data, {
-		validators: zodClient(formSchema),
+	const { form, enhance, errors } = superForm(data, {
+		validators: zodClient(csvSchema),
 		onSubmit() {
 			submitting = true;
 		},
@@ -35,24 +36,27 @@
 		}
 	});
 
-	const { form: formData, enhance } = form;
-	import { Button } from '$lib/components/ui/button';
+	const file = fileProxy(form, 'csvFile');
 </script>
 
 <h2 class="text-xl font-bold">Upload CSV</h2>
+<form method="POST" enctype="multipart/form-data" use:enhance action="?/importCSV">
+	<input type="file" name="csvFile" accept="text/csv" bind:files={$file} />
+	{#if $errors.csvFile}<span>{$errors.csvFile}</span>{/if}
+	<button>Submit</button>
+</form>
+<SuperDebug data={$form} />
 
-<form method="POST" use:enhance action="?/importCSV">
-	<Form.Field {form} name="name" class="py-6">
+<!-- <form method="POST" enctype="multipart/form-data" use:enhance action="?/importCSV">
+	<Form.Field {csvForm} name="csv" class="py-6">
 		<Form.Control let:attrs>
-			<Input
+			<input
 				{...attrs}
-				bind:value={$formData.name}
-				class="h-48 w-full border border-dashed"
 				type="file"
+				bind:files={$file}
+				class="h-48 w-full border border-dashed"
 				accept=".csv"
-			>
-				<Form.Label>Name</Form.Label>
-			</Input>
+			/>
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
@@ -67,4 +71,4 @@
 			{/if}</Form.Button
 		>
 	</div>
-</form>
+</form> -->

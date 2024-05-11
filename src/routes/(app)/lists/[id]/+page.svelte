@@ -1,5 +1,6 @@
 <script lang="ts">
 	export let data: PageData;
+	console.log(data);
 	const { list } = data;
 	import { enhance } from '$app/forms';
 	import File from 'lucide-svelte/icons/file';
@@ -97,7 +98,7 @@
 						</Button></Dialog.Trigger
 					>
 					<Dialog.Content>
-						<ImportCsvForm data={data.form} />
+						<ImportCsvForm data={data.csvForm} />
 					</Dialog.Content>
 				</Dialog.Root>
 
