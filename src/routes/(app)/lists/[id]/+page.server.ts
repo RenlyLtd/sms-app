@@ -116,63 +116,58 @@ export const actions: Actions = {
 			return fail(500, { message: 'Could not create the lead.' });
 		}
 	},
-	importCSV: async ({ request }) => {
+	importCSV: async ({ request, params }) => {
 		const csvForm = await superValidate(request, zod(csvSchema));
 
 		if (!csvForm.valid) {
 			return fail(400, { csvForm });
 		}
-
+		const list_id = params.id;
 		const readableCsv = csvForm.data.csvFile;
 		const fileContent = await readableCsv.text();
 
-		return new Promise((resolve, reject) => {
-			Papa.parse(fileContent, {
-				header: true,
-				skipEmptyLines: true,
-				complete: async (results) => {
-					const data = results.data;
-					try {
-						for (const item of data) {
-
-							try {
-								// Create the address first
-								const address = await db.address.create({
-									data: {
-										line1: data.line1,
-										line2: data.line2,
-										line3: data.line3,
-										line4: data.line4,
-										line5: data.line5,
-										line6: data.line6,
-										postCode: data.postcode
-									}
-								});
-					
-								// Then create the lead, linking the newly created address
-								const lead = await db.lead.create({
-									data: {
-										firstname: data.firstname,
-										lastname: data.lastname,
-										contact_no: data.phone,
-										email: data.email,
-										addressId: address.id // Assuming 'AddressId' is the foreign key in 'lead' table
-									}
-								});
-					
-								await db.listOnLead.create({
-									data: {
-										leadId: lead.id,
-										listId: listid
-									}
-								});
+		Papa.parse(fileContent, {
+			header: true,
+			skipEmptyLines: true,
+			complete: async (results) => {
+				// Iterate over each row of lead data
+				const leadsCreation = results.data.map(async (data) => {
+					// First, create the address
+					const address = await db.address.create({
+						data: {
+							line1: data.line1,
+							line2: data.line2,
+							line3: data.line3,
+							line4: data.line4,
+							line5: data.line5,
+							line6: data.line6,
+							postCode: data.postcode
 						}
-						resolve({ status: 200, body: { message: 'Data uploaded successfully' } });
-					} catch (error) {
-						reject({ status: 500, body: { error: 'Failed to upload data' } });
-					}
-				}
-			});
+					});
+
+					// Then create the lead, linking the newly created address
+					const lead = await db.lead.create({
+						data: {
+							firstname: data.firstname,
+							lastname: data.lastname,
+							contact_no: data.contact_no,
+							email: data.email,
+							addressId: address.id // Assuming 'addressId' is the foreign key in 'lead' table
+						}
+					});
+
+					// Create the listOnLead entry linking the lead to the list
+					await db.listOnLead.create({
+						data: {
+							leadId: lead.id,
+							listId: parseInt(list_id)
+						}
+					});
+				});
+
+				// Wait for all leads and their related entries to be created
+				await Promise.all(leadsCreation);
+			}
 		});
 	}
 };
