@@ -9,17 +9,18 @@
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import type { PageData } from './$types';
-
+	import { goto } from '$app/navigation';
 	import * as Table from '$lib/components/ui/table/index.js';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import CreateLeadForm from './create-lead-form.svelte';
 	export let data: PageData;
+	const { leads } = data;
+
 	import Search from 'lucide-svelte/icons/search';
 	import { Input } from '$lib/components/ui/input';
 	import FileSpreadsheet from 'lucide-svelte/icons/file-spreadsheet';
 
-	console.log(data);
 	import ImportCsvForm from './import-csv-form.svelte';
 </script>
 
@@ -98,9 +99,9 @@
 					</Table.Row>
 				</Table.Header>
 				<Table.Body>
-					{#each data.leads as item}
+					{#each leads as item}
 						<!-- content here -->
-						<Table.Row>
+						<Table.Row on:click={() => goto(`/leads/${item.id}`)} class="cursor-pointer">
 							<Table.Cell class="font-medium">{item.firstname}</Table.Cell>
 
 							<Table.Cell class="table-cell">{item.lastname}</Table.Cell>
