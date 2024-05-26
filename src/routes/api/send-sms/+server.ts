@@ -15,7 +15,7 @@ export const POST: RequestHandler = async ({ request }) => {
 				destinations: destinations,
 				message: message,
 				dlr_url:
-					'https://free-chefs-shine.loca.lt/api/dlr?reportcode=%code&destinationnumber=%dest&msgid=%msgid&dlr=%dlr&ts=%timestamp'
+					'https://www.nosms.co.uk/api/dlr?reportcode=%code&destinationnumber=%dest&msgid=%msgid&dlr=%dlr&ts=%timestamp'
 			})
 		});
 

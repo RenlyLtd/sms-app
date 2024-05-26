@@ -14,7 +14,7 @@ export const GET: RequestHandler = async ({ url }) => {
 				msg_id: msgid,
 				destination_number: dest,
 				code: code,
-				deliveryReport: dlr,
+				dlr_body: dlr,
 				timestamp: new Date(ts * 1000)
 			}
 		});
