@@ -4,7 +4,6 @@ import type { PageServerLoad, Actions } from './$types';
 import { db } from '$lib/server/prisma';
 import { fail, json } from '@sveltejs/kit';
 import { zod } from 'sveltekit-superforms/adapters';
-import { Prisma } from '@prisma/client';
 
 export const load: PageServerLoad = async () => {
 	return {

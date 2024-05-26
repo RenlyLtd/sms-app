@@ -1,3 +1,12 @@
+<script context="module" lang="ts">
+	import { redirect } from '@sveltejs/kit';
+	export const load: import('./$types').LayoutLoad = async ({ locals }) => {
+		if (!locals.user) {
+			throw redirect(302, '/login');
+		}
+	};
+</script>
+
 <script lang="ts">
 	import { page } from '$app/stores';
 

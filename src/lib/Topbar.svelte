@@ -15,9 +15,37 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import * as Sheet from '$lib/components/ui/sheet/index.js';
-
+	import { enhance } from '$app/forms';
 	export let page;
 	$: isActive = (href: string) => $page.url.pathname === href;
+
+	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
+
+	let isLoading = false;
+
+	const handleLogout = async () => {
+		isLoading = true;
+		try {
+			const response = await fetch('/api/logout', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+
+			if (response.ok) {
+				await goto('/login');
+			} else {
+				const error = await response.json();
+				alert(`Error: ${error.message}`);
+			}
+		} catch (error) {
+			alert('An unexpected error occurred');
+		} finally {
+			isLoading = false;
+		}
+	};
 </script>
 
 <header class="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
@@ -74,6 +102,11 @@
 			</div>
 		</form>
 	</div>
+
+	<button on:click={handleLogout} disabled={isLoading}>
+		{isLoading ? 'Logging out...' : 'Logout'}
+	</button>
+
 	<DropdownMenu.Root>
 		<DropdownMenu.Trigger asChild let:builder>
 			<Button builders={[builder]} variant="secondary" size="icon" class="rounded-full">
