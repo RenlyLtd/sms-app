@@ -71,7 +71,6 @@ model List {
   CampaignLists CampaignLists[]
 }
 
-// Campaigns
 model Campaign {
   id            Int             @id @default(autoincrement())
   name          String
@@ -81,6 +80,17 @@ model Campaign {
   ended         DateTime?
   status        String
   CampaignLists CampaignLists[]
+  templateId    Int?
+  template      Template?       @relation(fields: [templateId], references: [id])
+}
+
+model Template {
+  id        Int        @id @default(autoincrement())
+  name      String
+  content   String
+  created   DateTime   @default(now())
+  updated   DateTime   @updatedAt
+  Campaigns Campaign[]
 }
 
 model CampaignLists {

@@ -61,6 +61,14 @@
 	});
 	import { Label } from '$lib/components/ui/label';
 	import { goto } from '$app/navigation';
+	let selectedItems: number[] = [];
+
+	function toggleAll(e) {
+		selectedItems = e.target.checked ? lists.map((list) => list.list_id) : [];
+	}
+	import Trash from 'lucide-svelte/icons/trash-2';
+
+	$: console.log(selectedItems);
 </script>
 
 <svelte:window on:resize={handleResize} />
@@ -81,6 +89,16 @@
 			/>
 		</div>
 		<div>
+			{#if selectedItems.length > 0}
+				<form method="POST" action="?/deleteLists">
+					<Button size="sm" variant="destructive" class="h-8 gap-1" type="submit">
+						<Trash class="h-3.5 w-3.5" />
+						<input type="hidden" value={selectedItems} name="selectedItems" />
+						<span class="sr-only sm:not-sr-only sm:whitespace-nowrap"> Delete </span>
+					</Button>
+				</form>
+				<!-- content here -->
+			{/if}
 			<DropdownMenu.Root>
 				<DropdownMenu.Trigger asChild let:builder>
 					<Button builders={[builder]} variant="outline" size="sm" class="h-8 gap-1">
@@ -116,6 +134,13 @@
 			<Table.Root>
 				<Table.Header>
 					<Table.Row>
+						<Table.Head class="hidden  sm:table-cell"
+							><input
+								type="checkbox"
+								on:change={toggleAll}
+								checked={selectedItems.length === lists.length}
+							/></Table.Head
+						>
 						<Table.Head class="hidden  sm:table-cell">Name</Table.Head>
 						<Table.Head>Type</Table.Head>
 						<Table.Head class="hidden w-[300px] md:table-cell">Description</Table.Head>
@@ -123,12 +148,22 @@
 						<Table.Head class="hidden md:table-cell">Tags</Table.Head>
 						<Table.Head class="hidden md:table-cell">Leads</Table.Head>
 						<Table.Head class="hidden md:table-cell">Created at</Table.Head>
+						<Table.Head class="table-cell">
+							<span class="sr-only">Actions</span>
+						</Table.Head>
 					</Table.Row>
 				</Table.Header>
 				<Table.Body>
 					{#each lists as list}
 						<!-- content here -->
-						<Table.Row on:click={goto(`/lists/${list.list_id}`)} class="cursor-pointer">
+						<Table.Row>
+							<Table.Cell class="font-medium"
+								><input
+									type="checkbox"
+									bind:group={selectedItems}
+									value={list.list_id}
+								/></Table.Cell
+							>
 							<Table.Cell class="font-medium">{list.name}</Table.Cell>
 							<Table.Cell>
 								{list.type}
@@ -143,6 +178,31 @@
 							</Table.Cell>
 							<Table.Cell class="hidden md:table-cell">{list.leads.length}</Table.Cell>
 							<Table.Cell class="hidden md:table-cell">{list.created.toLocaleString()}</Table.Cell>
+							<Table.Cell>
+								<DropdownMenu.Root>
+									<DropdownMenu.Trigger asChild let:builder>
+										<Button aria-haspopup="true" size="icon" variant="ghost" builders={[builder]}>
+											<Ellipsis class="h-4 w-4" />
+											<span class="sr-only">Toggle menu</span>
+										</Button>
+									</DropdownMenu.Trigger>
+									<DropdownMenu.Content align="end">
+										<DropdownMenu.Label>Actions</DropdownMenu.Label>
+										<DropdownMenu.Item
+											on:click={() => goto(`/lists/${list.list_id}`)}
+											class="cursor-pointer">Edit</DropdownMenu.Item
+										>
+										<form method="POST" action="?/deleteList">
+											<input type="hidden" name="listId" value={list.list_id} />
+											<DropdownMenu.Item class="cursor-pointer"
+												><Button type="submit" variant="ghost" class="m-0 h-fit p-0" size="icon"
+													>Delete</Button
+												></DropdownMenu.Item
+											>
+										</form>
+									</DropdownMenu.Content>
+								</DropdownMenu.Root>
+							</Table.Cell>
 						</Table.Row>
 					{/each}
 				</Table.Body>

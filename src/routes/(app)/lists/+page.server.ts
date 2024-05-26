@@ -22,22 +22,20 @@ export const load: PageServerLoad = async () => {
 };
 
 export const actions: Actions = {
-	deleteList: async ({ url }) => {
-		const id = url.searchParams.get('id');
-		if (!id) {
-			return fail(400, { message: 'Invalid request' });
-		}
+	deleteLead: async ({ request }) => {
+		const formData = await request.formData();
+		const listId = formData.get('listId');
 
 		try {
 			await db.list.delete({
 				where: {
-					list_id: Number(id)
+					list_id: Number(listId)
 				}
 			});
 		} catch (err) {
 			console.error(err);
 			return fail(500, {
-				message: 'Something went wrong deleting your article'
+				message: 'Something went wrong deleting your list'
 			});
 		}
 
@@ -77,5 +75,36 @@ export const actions: Actions = {
 			console.error(err);
 			return fail(500, { message: 'Could not create the lead.' });
 		}
+	},
+	deleteLists: async ({ request }) => {
+		const formData = await request.formData();
+
+		const selectedItems = formData.get('selectedItems');
+
+		const leadsArray = selectedItems?.split(',').map(Number);
+		// Convert IDs to numbers
+
+		if (selectedItems?.length === 0) {
+			return fail(400, { message: 'Invalid request' });
+		}
+
+		try {
+			await db.list.deleteMany({
+				where: {
+					list_id: {
+						in: leadsArray
+					}
+				}
+			});
+		} catch (err) {
+			console.error(err);
+			return fail(500, {
+				message: 'Something went wrong deleting the leads from the list'
+			});
+		}
+
+		return {
+			status: 200
+		};
 	}
 };

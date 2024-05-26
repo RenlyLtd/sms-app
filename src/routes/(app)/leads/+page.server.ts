@@ -2,8 +2,9 @@ import { superValidate } from 'sveltekit-superforms';
 import { formSchema } from './schema';
 import type { PageServerLoad, Actions } from './$types';
 import { db } from '$lib/server/prisma';
-import { fail } from '@sveltejs/kit';
+import { fail, json } from '@sveltejs/kit';
 import { zod } from 'sveltekit-superforms/adapters';
+import { Prisma } from '@prisma/client';
 
 export const load: PageServerLoad = async () => {
 	return {
@@ -70,22 +71,48 @@ export const actions: Actions = {
 			return fail(500, { message: 'Could not create the lead.' });
 		}
 	},
-	deleteLead: async ({ url }) => {
-		const id = url.searchParams.get('id');
-		if (!id) {
-			return fail(400, { message: 'Invalid request' });
-		}
+	deleteLead: async ({ request }) => {
+		const formData = await request.formData();
+		const leadId = formData.get('leadId');
 
 		try {
 			await db.lead.delete({
 				where: {
-					id: Number(id)
+					id: Number(leadId)
+				}
+			});
+			return {
+				success: true,
+				status: 200
+			};
+		} catch (err) {
+			return fail(500, { message: err.message });
+		}
+	},
+	deleteLeads: async ({ request }) => {
+		const formData = await request.formData();
+
+		const selectedItems = formData.get('selectedItems');
+
+		const leadsArray = selectedItems?.split(',').map(Number);
+		// Convert IDs to numbers
+
+		if (selectedItems?.length === 0) {
+			return fail(400, { message: 'Invalid request' });
+		}
+
+		try {
+			await db.lead.deleteMany({
+				where: {
+					id: {
+						in: leadsArray
+					}
 				}
 			});
 		} catch (err) {
 			console.error(err);
 			return fail(500, {
-				message: 'Something went wrong deleting your article'
+				message: 'Something went wrong deleting the leads from the list'
 			});
 		}
 

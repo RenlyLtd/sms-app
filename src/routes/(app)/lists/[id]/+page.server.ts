@@ -169,5 +169,34 @@ export const actions: Actions = {
 				await Promise.all(leadsCreation);
 			}
 		});
+	},
+	removeLeadFromList: async ({ request }) => {
+		const formData = await request.formData();
+		const leadId = formData.get('leadId');
+		const listId = formData.get('listId');
+
+		if (!leadId || !listId) {
+			return fail(400, { message: 'Invalid request' });
+		}
+
+		try {
+			await db.listOnLead.delete({
+				where: {
+					listId_leadId: {
+						leadId: Number(leadId),
+						listId: Number(listId)
+					}
+				}
+			});
+		} catch (err) {
+			console.error(err);
+			return fail(500, {
+				message: 'Something went wrong deleting the lead from the list'
+			});
+		}
+
+		return {
+			status: 200
+		};
 	}
 };

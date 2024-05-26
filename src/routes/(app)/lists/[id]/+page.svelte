@@ -7,6 +7,7 @@
 	import ListFilter from 'lucide-svelte/icons/list-filter';
 	import Ellipsis from 'lucide-svelte/icons/ellipsis';
 	import CirclePlus from 'lucide-svelte/icons/circle-plus';
+	import { page } from '$app/stores';
 
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
@@ -14,6 +15,7 @@
 	import type { PageData } from './$types';
 
 	import * as Table from '$lib/components/ui/table/index.js';
+	import Trash from 'lucide-svelte/icons/trash-2';
 
 	let showStatusBar = true;
 	let showActivityBar = false;
@@ -71,6 +73,8 @@
 	import FileSpreadsheet from 'lucide-svelte/icons/file-spreadsheet';
 	import ImportCsvForm from './import-csv-form.svelte';
 	import CreateLeadForm from './create-lead-form.svelte';
+	import Send from 'lucide-svelte/icons/send';
+	import LeadToListForm from './lead-to-list-form.svelte';
 </script>
 
 <main class="m-4 space-y-4">
@@ -101,12 +105,43 @@
 						<ImportCsvForm data={data.csvForm} />
 					</Dialog.Content>
 				</Dialog.Root>
+				<Dialog.Root>
+					<Dialog.Trigger
+						><Button size="sm" variant="outline" class="h-8 gap-1">
+							<FileSpreadsheet class="h-3.5 w-3.5" />
+							<span class="sr-only sm:not-sr-only sm:whitespace-nowrap"> Add Leads to List </span>
+						</Button></Dialog.Trigger
+					>
+					<Dialog.Content><LeadToListForm /></Dialog.Content>
+				</Dialog.Root>
+				<Dialog.Root>
+					<Dialog.Trigger
+						><Button size="sm" variant="destructive" class="h-8 gap-1">
+							<Trash class="h-3.5 w-3.5" />
+							<span class="sr-only sm:not-sr-only sm:whitespace-nowrap"> Delete </span>
+						</Button></Dialog.Trigger
+					>
+					<Dialog.Content>
+						<ImportCsvForm data={data.csvForm} />
+					</Dialog.Content>
+				</Dialog.Root>
 
 				<Dialog.Root>
 					<Dialog.Trigger
-						><Button size="sm" class="h-8 gap-1">
+						><Button size="sm" variant="outline" class="h-8 gap-1">
 							<CirclePlus class="h-3.5 w-3.5" />
 							<span class="sr-only sm:not-sr-only sm:whitespace-nowrap"> Add New Lead </span>
+						</Button></Dialog.Trigger
+					>
+					<Dialog.Content>
+						<CreateLeadForm data={data.form} list={data.list} />
+					</Dialog.Content>
+				</Dialog.Root>
+				<Dialog.Root>
+					<Dialog.Trigger
+						><Button size="sm" class="h-8 gap-1">
+							<Send class="h-3.5 w-3.5" />
+							<span class="sr-only sm:not-sr-only sm:whitespace-nowrap"> Bulk Send SMS </span>
 						</Button></Dialog.Trigger
 					>
 					<Dialog.Content>
@@ -122,6 +157,7 @@
 			<Table.Root class="overflow-auto">
 				<Table.Header>
 					<Table.Row>
+						<Table.Head class="table-cell"><input type="checkbox" /></Table.Head>
 						<Table.Head class="table-cell">First Name</Table.Head>
 						<Table.Head class="table-cell">Last Name</Table.Head>
 						<Table.Head class="table-cell">Contact Number</Table.Head>
@@ -137,6 +173,7 @@
 				<Table.Body>
 					{#each list.leads as item}
 						<Table.Row>
+							<Table.Cell class="font-medium"><input type="checkbox" /></Table.Cell>
 							<Table.Cell class="font-medium">{item.lead.firstname}</Table.Cell>
 
 							<Table.Cell class="table-cell">{item.lead.lastname}</Table.Cell>
@@ -148,19 +185,13 @@
 								>{item.lead.created.toLocaleString()}</Table.Cell
 							>
 							<Table.Cell>
-								<DropdownMenu.Root>
-									<DropdownMenu.Trigger asChild let:builder>
-										<Button aria-haspopup="true" size="icon" variant="ghost" builders={[builder]}>
-											<Ellipsis class="h-4 w-4" />
-											<span class="sr-only">Toggle menu</span>
-										</Button>
-									</DropdownMenu.Trigger>
-									<DropdownMenu.Content align="end">
-										<DropdownMenu.Label>Actions</DropdownMenu.Label>
-										<DropdownMenu.Item>Edit</DropdownMenu.Item>
-										<DropdownMenu.Item>Delete</DropdownMenu.Item>
-									</DropdownMenu.Content>
-								</DropdownMenu.Root>
+								<form method="POST" action="?/removeLeadFromList">
+									<input type="hidden" name="listId" value={$page.params.id} />
+									<input type="hidden" name="leadId" value={item.lead.id} />
+									<Button aria-haspopup="true" size="icon" variant="ghost" type="submit">
+										<Trash class=" h-4 w-4" />
+									</Button>
+								</form>
 							</Table.Cell>
 						</Table.Row>
 					{/each}
@@ -169,7 +200,7 @@
 		</Card.Content>
 		<Card.Footer>
 			<div class="text-xs text-muted-foreground">
-				Showing <strong>1-10</strong> of <strong>{list.leads.length}</strong> leads
+				Showing <strong>1-10</strong> of <strong>{list?.leads.length}</strong> leads
 			</div>
 		</Card.Footer>
 	</Card.Root>
