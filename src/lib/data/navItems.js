@@ -44,6 +44,11 @@ export let navItems = [
 		icon: MessageSquare
 	},
 	{
+		link: 'Bulk Send',
+		url: '/bulk-send',
+		icon: MessageSquare
+	},
+	{
 		link: 'Settings',
 		url: '/settings',
 		icon: Settings
