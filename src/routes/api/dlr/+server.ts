@@ -19,6 +19,7 @@ export const GET: RequestHandler = async ({ url }) => {
 			}
 		});
 
+		console.log(report);
 		return {
 			status: 200,
 			body: {
@@ -27,6 +28,7 @@ export const GET: RequestHandler = async ({ url }) => {
 			}
 		};
 	} catch (error) {
+		console.log(error);
 		return {
 			status: 500,
 			body: {
