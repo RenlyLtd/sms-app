@@ -56,7 +56,7 @@
 	};
 </script>
 
-<form on:submit={handleSubmit} use:enhance>
+<form on:submit={handleSubmit}>
 	<Card.Root class="m-2 max-w-lg">
 		<Card.Header>
 			<Card.Title>Bulk Send SMS</Card.Title>

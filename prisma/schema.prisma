@@ -186,3 +186,16 @@ model Address {
   Customers    Customer[] // Assumes an optional one-to-many relationship
   Leads        Lead[] // Assumes an optional one-to-many relationship
 }
+
+
+model User {
+  id       String    @id
+  sessions Session[]
+}
+
+model Session {
+  id        String   @id
+  userId    String
+  expiresAt DateTime
+  user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
+}
