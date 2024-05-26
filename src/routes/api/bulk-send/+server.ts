@@ -13,7 +13,9 @@ export const POST: RequestHandler = async ({ request }) => {
 			},
 			body: JSON.stringify({
 				destinations: destinations,
-				message: message
+				message: message,
+				dlr_url:
+					'https://www.nosms.co.uk/api/dlr?reportcode=%code&destinationnumber=%dest&msgid=%msgid&dlr=%dlr&ts=%timestamp'
 			})
 		});
 
