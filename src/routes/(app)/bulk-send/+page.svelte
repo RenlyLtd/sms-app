@@ -27,6 +27,7 @@
 
 		Papa.parse(file, {
 			complete: async (results: any) => {
+				console.log('Parsing complete:', results, file);
 				const destinations = results.data
 					.map((row: { destinations: string }) => row.destinations)
 					.filter(Boolean);
